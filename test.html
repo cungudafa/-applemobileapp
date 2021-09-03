@@ -188,13 +188,13 @@
                     document.getElementById("icon").href = base64
                 };
                 img.onerror = function(){
-                    document.getElementById("icon").href = 'https://cdn-app-icon.pgyer.com/d/7/d/b/f/d7dbfe643d226f9d4d46585d22a483ff?x-oss-process=image/resize,m_lfit,h_300,w_300/format,jpg'
+                    document.getElementById("icon").href = ''
                 }
             }
         }else{
             //没有传设备icon,直接使用默认图
-            deviceImg = 'https://cdn-app-icon.pgyer.com/d/7/d/b/f/d7dbfe643d226f9d4d46585d22a483ff?x-oss-process=image/resize,m_lfit,h_300,w_300/format,jpg'
-            document.getElementById("icon").href = 'https://cdn-app-icon.pgyer.com/d/7/d/b/f/d7dbfe643d226f9d4d46585d22a483ff?x-oss-process=image/resize,m_lfit,h_300,w_300/format,jpg'
+            deviceImg = ''
+            document.getElementById("icon").href = ''
         }
 
         if (window.navigator.standalone == true) { //打开快捷方式
