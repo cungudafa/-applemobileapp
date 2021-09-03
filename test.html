@@ -6,7 +6,7 @@
         <meta content="text/html charset=UTF-8" http-equiv="Content-Type">
         <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no">
         <script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.8.0.js"></script>
-        <link rel="apple-touch-icon-precomposed" id="icon" href="iconImageString">
+        <link rel="apple-touch-icon-precomposed" id="icon" href="">
         <title>Title</title>
         </head>
     <body>
@@ -157,8 +157,8 @@
         }
     </style>
     <script>
-        let icon = getQueryParam("iconImageString")||''
-        let scheme = getQueryParam("operation")||''
+        let icon = getQueryParam("icon")||''
+        let scheme = getQueryParam("scheme")||''
         let title = getQueryParam("title")||''
         title = decodeURIComponent(title)
         let deviceImg
