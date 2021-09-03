@@ -1,18 +1,295 @@
 <!DOCTYPE html>
 <html>
-<head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-</head>
-<body>
-</body>
-<script type="text/javascript">
-    const dataurl = '';
-    var url = location.search;
-    if (url && url.length > 1 && url.indexOf('?dataurl=') !== -1) {
-        url = url.replace("?dataurl=", "");
-        window.location.replace(url);
-    } else {
-        window.location.replace(dataurl);
-    }
-</script>
+    <head>
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="default">
+        <meta content="text/html charset=UTF-8" http-equiv="Content-Type">
+        <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no">
+        <script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.8.0.js"></script>
+        <link rel="apple-touch-icon-precomposed" id="icon" href="IconImageString">
+        <title>Title</title>
+        </head>
+    <body>
+        <a href="Operation" id="qbt" style="display:none"></a>
+        <span id="msg"></span>
+
+        <div id="createPage">
+            <img id="bg" class="bg" src="http://qrcode.midea.com/AboutApp/img/iphone8@2x.png" />
+            <div class="device-wrap">
+                <img id="createDeviceIcon" class="create-device-icon"/>
+                <div id="createDeviceName" class="create-device-name"></div>
+            </div>
+        </div>
+        <div id="enterPage" class="enter-page">
+            <div class="enter-tips">你即将进入</div>
+            <img id="enterDeviceIcon" class="enter-device-icon"/>
+            <div id="enterDeviceName" class="enter-device-name"></div>
+            <div class="btn-wrap" id="btnWrap" onclick="jumpSchema()">
+                <div class="btn">立即进入</div>
+            </div>
+        </div>
+    </body>
+    <style>
+        html{
+            font-family:PingFang SC,Microsoft YaHei;
+        }
+        body{
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+        }
+        .bg{
+            z-index:1;
+            width:100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+        .device-wrap{
+            position: relative;
+            display: flex;
+            width: 100%;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            z-index: 10;
+            margin-top: 22px;
+        }
+        @media only screen and (device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3) {
+            .device-wrap{
+                margin-top: 36px;
+            }
+        }
+        @media only screen and (device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio:3) {
+            .device-wrap{
+                margin-top: 36px;
+            }
+        }
+        @media only screen and (device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio:2) {
+            .device-wrap{
+                margin-top: 36px;
+            }
+        }
+        @media only screen and (device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio:3) {
+            .device-wrap{
+                margin-top: 36px;
+            }
+        }
+        @media only screen and (device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio:3) {
+            .device-wrap{
+                margin-top: 36px;
+            }
+        }
+        @media only screen and (device-width: 360px) and (device-height: 780px) and (-webkit-device-pixel-ratio:3) {
+            .device-wrap{
+                margin-top: 36px;
+            }
+        }
+        .create-device-icon{
+            width: 80px;
+            height: 80px;
+            border-radius: 12px;
+            margin-bottom: 12px;
+            background-color: #FFFFFF;
+        }
+        .create-device-name{
+            width: 100%;
+            position: relative;
+            z-index: 10;
+            margin: 0 auto;
+            font-size: 14px;
+            color: #232323;
+            text-align: center;
+            line-height: 14px;
+            font-family: PingFangSC-Regular;
+        }
+        .enter-page{
+            display: none;
+        }
+        .enter-tips{
+            position: relative;
+            margin-top: 150px;
+            font-size: 14px;
+            color: #8A8A8F;
+            text-align: center;
+            line-height: 14px;
+        }
+        .enter-device-icon{
+            position: relative;
+            width: 100px;
+            height: 100px;
+            border-radius: 12px;
+            margin: 24px auto 0;
+            display: flex;
+            align-items: center;
+            justify-items: center;
+            background-color: #FFFFFF
+        }
+        .enter-device-name{
+            width: 100%;
+            position: relative;
+            z-index: 10;
+            margin: 12px auto;
+            font-size: 14px;
+            font-weight: bold;
+            color: #232323;
+            text-align: center;
+            line-height: 18px;
+            font-size: 18px;
+        }
+   
+        .btn-wrap{
+            position: fixed;
+            bottom: 44px;
+            width: 100%;
+        }
+        .btn{
+            background: #267AFF;
+            border-radius: 24px;
+            z-index:1;
+            width: 320px;
+            height: 46px;
+            text-align:center;
+            font-weight: bold;
+            font-size: 16px;
+            color: #FFFFFF;
+            text-align: center;
+            line-height: 46px;
+            margin: 0 auto;
+        }
+    </style>
+    <script>
+        let icon = getQueryParam("iconImageString")||''
+        let scheme = getQueryParam("operation")||''
+        let title = getQueryParam("title")||''
+        title = decodeURIComponent(title)
+        let deviceImg
+        
+        document.title = title
+        if(icon){
+            deviceImg = decodeURIComponent(icon)
+            //后台给的设备icon为透明背景，需要给icon加上白色背景，否则首屏显示的icon为黑色
+            const canvas = document.createElement('canvas')
+            var cxt=canvas.getContext("2d");
+            cxt.fillStyle="#ffffff";
+            var img=new Image()
+            img.setAttribute("crossOrigin",'Anonymous')
+            img.src=deviceImg
+            var bgImg= new Image()
+            bgImg.src = 'http://qrcode.midea.com/AboutApp/img/shortcut-bg.png'
+            bgImg.onload = function(){
+                img.onload = function () {
+                    // 显示图片
+                    canvas.width=this.width
+                    canvas.height=this.height
+                    console.log(this.width)
+                    cxt.fillRect(0,0,this.width,this.height);
+                    cxt.drawImage(bgImg, 0, 0,this.width,this.height);
+                    cxt.drawImage(img, 0, 0,this.width,this.height);
+                    let base64 = canvas.toDataURL('image/png')
+                    document.getElementById("icon").href = base64
+                };
+                img.onerror = function(){
+                    document.getElementById("icon").href = 'https://cdn-app-icon.pgyer.com/d/7/d/b/f/d7dbfe643d226f9d4d46585d22a483ff?x-oss-process=image/resize,m_lfit,h_300,w_300/format,jpg'
+                }
+            }
+        }else{
+            //没有传设备icon,直接使用默认图
+            deviceImg = 'https://cdn-app-icon.pgyer.com/d/7/d/b/f/d7dbfe643d226f9d4d46585d22a483ff?x-oss-process=image/resize,m_lfit,h_300,w_300/format,jpg'
+            document.getElementById("icon").href = 'https://cdn-app-icon.pgyer.com/d/7/d/b/f/d7dbfe643d226f9d4d46585d22a483ff?x-oss-process=image/resize,m_lfit,h_300,w_300/format,jpg'
+        }
+
+        if (window.navigator.standalone == true) { //打开快捷方式
+            //显示立即进入按钮，解决多次打开快捷方式不会跳转app
+            document.getElementById('createPage').style.display="none"
+            document.getElementById('enterPage').style.display="block"
+            document.getElementById('enterDeviceIcon').src=deviceImg
+            document.getElementById('enterDeviceName').innerText=title
+            window.location.href = decodeURIComponent(scheme)
+        }else{//创建快捷方式
+            document.getElementById('createPage').style.display="block"
+            document.getElementById('enterPage').style.display="none"
+            document.getElementById('createDeviceIcon').src=deviceImg
+            document.getElementById('createDeviceName').innerText=title
+            let isipx = isIpx()
+            if(isipx){
+                document.getElementById('bg').src='https://qrcode.midea.com/AboutApp/img/iphonex@2x.png'
+            }else{
+                document.getElementById('bg').src='https://qrcode.midea.com/AboutApp/img/iphone8@2x.png'
+            }
+        }
+
+        function jumpSchema(){
+            window.location.href = decodeURIComponent(scheme)
+        }
+
+        function getQueryParam(variable){
+            let query = window.location.search.substring(1);
+            let param = query.split("&");
+            for (let i=0;i<param.length;i++) {
+                let pair = param[i].split("=");
+                if(pair[0] == variable){
+                    return pair[1];
+                }
+            }
+            return(false);
+        }
+
+        function isIos() {
+            let ua = navigator.userAgent.toLowerCase()
+            if (/iphone|ipad|ipod/.test(ua)) {
+                return true
+            } else {
+                return false
+            }
+        }
+
+        function isIpx() {
+            // iPhone X
+            let isIPhoneX =
+                isIos() &&
+                window.devicePixelRatio &&
+                window.devicePixelRatio === 3 &&
+                window.screen.width === 375 &&
+                window.screen.height === 812
+            // iPhone XS Max
+            let isIPhoneXSMax =
+                isIos() &&
+                window.devicePixelRatio &&
+                window.devicePixelRatio === 3 &&
+                window.screen.width === 414 &&
+                window.screen.height === 896
+            // iPhone XR
+            let isIPhoneXR =
+                isIos() &&
+                window.devicePixelRatio &&
+                window.devicePixelRatio === 2 &&
+                window.screen.width === 414 &&
+                window.screen.height === 896
+            // iPhone 12,iPhone 12 Pro
+            let isIPhone12 =
+                isIos() &&
+                window.devicePixelRatio &&
+                window.devicePixelRatio === 3 &&
+                window.screen.width === 390 &&
+                window.screen.height === 844
+            // iPhone 12 pro max
+            let isIPhone12Max =
+                isIos() &&
+                window.devicePixelRatio &&
+                window.devicePixelRatio === 3 &&
+                window.screen.width === 428 &&
+                window.screen.height === 926
+            // iPhone 12 mini
+            let isIPhone12Mini =
+                isIos() &&
+                window.devicePixelRatio &&
+                window.devicePixelRatio === 3 &&
+                window.screen.width === 360 &&
+                window.screen.height === 780
+            return isIPhoneX || isIPhoneXSMax || isIPhoneXR || isIPhone12 || isIPhone12Max || isIPhone12Mini
+        }
+    </script>
 </html>
+
